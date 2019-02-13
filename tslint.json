@@ -1,0 +1,26 @@
+{
+  "extends": [
+    "tslint:recommended",
+    "tslint-react",
+    "tslint-config-standard",
+    "tslint-config-prettier"
+  ],
+  "rules": {
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "member-ordering": false,
+    "jsx-no-lambda": false,
+    "no-console": false,
+    "member-access": [true, "no-public"],
+    "jsx-boolean-value": false,
+    "interface-name": false,
+    "no-shadowed-variable": false,
+    "no-duplicate-imports": false,
+    "no-empty-interface": false,
+    "max-classes-per-file": false,
+    "prefer-const": false,
+    "prefer-for-of": false,
+    "array-type": false,
+    "no-empty": false
+  }
+}
