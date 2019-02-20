@@ -1,5 +1,3 @@
-import { View } from "./View";
-import { ListView } from "./ListView";
-import { TabView } from "./TabView";
-
-export { View, TabView, ListView };
+export { View } from "./View";
+export { ListView } from "./ListView";
+export { TabView } from "./TabView";

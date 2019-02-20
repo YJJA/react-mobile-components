@@ -1,10 +1,10 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { LayerContent } from './LayerContent';
-import { LayerBox } from './LayerBox';
-import { ThreeBounce } from '../Loading/ThreeBounce';
-import uid from '../utils/uid';
+import { LayerContent } from "./LayerContent";
+import { LayerBox } from "./LayerBox";
+import { ThreeBounce } from "../Loading/ThreeBounce";
+import { uid } from "../utils/uid";
 
 export interface ILayerMethodProps {
   onOk?(): void;
@@ -44,8 +44,8 @@ export class LayerMethod {
   constructor(props: ILayerMethodProps) {
     this.props = { ...LayerMethod.defaultProps, ...props };
 
-    this.el = document.createElement('div');
-    this.el.id = uid('LayerMethod');
+    this.el = document.createElement("div");
+    this.el.id = uid("LayerMethod");
     document.body.appendChild(this.el);
 
     if (this.props.timeout) {

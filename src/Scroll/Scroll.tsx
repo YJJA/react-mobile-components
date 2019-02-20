@@ -50,14 +50,14 @@ export interface IScrollProps {
   momentum?: boolean;
   probeType?: 1 | 2 | 3;
   preventDefault?: boolean;
-  preventDefaultException?: Object;
+  preventDefaultException?: object;
   observeDOM?: boolean;
   stopPropagation?: boolean;
 }
 
 export class Scroll extends React.Component<IScrollProps> {
-  ref: React.RefObject<HTMLDivElement> = React.createRef();
-  contentRef: React.RefObject<HTMLDivElement> = React.createRef();
+  ref: React.RefObject<any> = React.createRef();
+  contentRef: React.RefObject<any> = React.createRef();
   scroll: BScroll | null = null;
 
   componentDidMount() {

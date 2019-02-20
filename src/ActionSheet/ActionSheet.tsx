@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { ActionSheetContent, IActionSheetItem } from "./ActionSheetContent";
-import uid from "../utils/uid";
+import { uid } from "../utils/uid";
 
 /**
  * onSelect function
