@@ -67,6 +67,10 @@
   version "15.5.8"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.8.tgz#8ae4e0ea205fe95c3901a5a1df7f66495e3a56ce"
 
+"@types/ramda@^0.25.50":
+  version "0.25.50"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.25.50.tgz#7f21d47c650f85b8a61c2b608adf8aa0f1a8fccf"
+
 "@types/react-dom@^16.8.0":
   version "16.8.0"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.8.0.tgz#c565f43f9d2ec911f9e0b8f3b74e25e67879aa3f"
@@ -483,6 +487,10 @@ qs@^6.6.0:
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.6.0.tgz#a99c0f69a8d26bf7ef012f871cdabb0aee4424c2"
 
+ramda@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+
 react-dom@16.8.1:
   version "16.8.1"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.8.1.tgz#ec860f98853d09d39bafd3a6f1e12389d283dbb4"
@@ -710,6 +718,10 @@ typescript-styled-plugin@^0.13.0:
 typescript-template-language-service-decorator@^2.0.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/typescript-template-language-service-decorator/-/typescript-template-language-service-decorator-2.2.0.tgz#4ee6d580f307fb9239978e69626f2775b8a59b2a"
+
+typescript@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.3.3.tgz#f1657fc7daa27e1a8930758ace9ae8da31403221"
 
 util-deprecate@^1.0.1:
   version "1.0.2"

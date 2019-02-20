@@ -1,18 +1,18 @@
-import * as React from 'react';
-import styled from 'styled-components';
+import * as React from "react";
+import styled from "styled-components";
 import {
   Field,
   WrappedFieldInputProps,
   WrappedFieldMetaProps,
   BaseFieldProps,
   GenericFieldHTMLAttributes,
-} from 'redux-form';
+} from "redux-form";
 
-import { FormControl } from './FormControl';
-import Picker from '../Picker';
-import uid from '../utils/uid';
+import { FormControl } from "./FormControl";
+import { Picker } from "../Picker";
+import { uid } from "../utils/uid";
 
-const DivControl = FormControl.withComponent('div');
+const DivControl = FormControl.withComponent("div");
 
 const FormControlWithDiv = styled(DivControl)`
   &.placeholder {
@@ -32,12 +32,9 @@ export interface IFormPickerState {
   visible: boolean;
 }
 
-export class FormPicker extends React.Component<
-  IFormPickerProps,
-  IFormPickerState
-> {
+export class FormPicker extends React.Component<IFormPickerProps, IFormPickerState> {
   state = {
-    uid: uid('picker'),
+    uid: uid("picker"),
     visible: false,
   };
 
@@ -63,14 +60,11 @@ export class FormPicker extends React.Component<
 
     return (
       <>
-        <FormControlWithDiv
-          onClick={this.onShow}
-          className={input.value ? 'placeholder' : ''}
-        >
+        <FormControlWithDiv onClick={this.onShow} className={input.value ? "placeholder" : ""}>
           {input.value || placeholder}
         </FormControlWithDiv>
         <Picker
-          options={[[{ value: 1, label: '调整' }]]}
+          options={[[{ value: 1, label: "调整" }]]}
           visible={visible}
           value={input.value}
           onOk={this.onOk}
@@ -83,8 +77,6 @@ export class FormPicker extends React.Component<
   }
 }
 
-export const PickerField = (
-  props: BaseFieldProps & GenericFieldHTMLAttributes
-) => {
+export const PickerField = (props: BaseFieldProps & GenericFieldHTMLAttributes) => {
   return <Field {...props} component={FormPicker} />;
 };

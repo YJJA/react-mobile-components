@@ -1,7 +1,6 @@
-import * as React from "react";
 import styled from "styled-components";
 
-export const FormControl = styled.input`
+export const FormControl = styled.div`
   display: block;
   width: 100%;
   padding: 0.24rem 0.24rem;
