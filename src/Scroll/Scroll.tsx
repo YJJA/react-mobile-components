@@ -1,7 +1,7 @@
-import * as React from "react";
-import BScroll from "better-scroll";
-import styled from "styled-components";
-import style from "dom-helpers/style";
+import React from 'react';
+import BScroll from 'better-scroll';
+import styled from 'styled-components';
+import style from 'dom-helpers/style';
 
 const ScrollWrapper = styled.div`
   flex: 1;
@@ -33,7 +33,7 @@ const PullupWrapper = styled.div`
   padding: 16px 0;
 `;
 
-export interface IScrollProps {
+export interface ScrollProps {
   children: React.ReactChild;
   className?: string;
   contentStyle?: { [key: string]: any };
@@ -55,7 +55,7 @@ export interface IScrollProps {
   stopPropagation?: boolean;
 }
 
-export class Scroll extends React.Component<IScrollProps> {
+export class Scroll extends React.Component<ScrollProps> {
   ref: React.RefObject<any> = React.createRef();
   contentRef: React.RefObject<any> = React.createRef();
   scroll: BScroll | null = null;

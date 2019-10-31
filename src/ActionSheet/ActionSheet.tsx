@@ -1,80 +1,111 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import React, { useCallback, useState } from 'react';
+import styled from 'styled-components';
 
-import { ActionSheetContent, IActionSheetItem } from "./ActionSheetContent";
-import { uid } from "../utils/uid";
+import { LayerContainer } from '../Layer/LayerContainer';
+import { LayerPlacement } from '../Layer/layer-placement';
+import { useRefProps } from '../hooks';
 
-/**
- * onSelect function
- * onCancel function
- * options Array<{label, value}>
- */
+const ActionSheetBody = styled.div`
+  width: 100%;
+`;
 
-export interface IActionSheet {
-  onSelect?(key: string): void;
-  onCancel?(): void;
-  options: IActionSheetItem[];
-}
+const ActionSheetItem = styled.div`
+  padding: 12px;
+  background-color: #fff;
+  text-align: center;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #fff;
+  color: #4a4a4a;
+  margin-top: 1px;
 
-export class ActionSheet {
-  static open(props: IActionSheet) {
-    return new ActionSheet(props);
+  &:first-child {
+    margin-top: 0;
   }
+`;
 
-  props: IActionSheet;
-  el: HTMLElement;
+const ActionSheetCancel = styled(ActionSheetItem)`
+  color: #ff4a08;
+  margin-top: 10px;
+`;
+
+const ActionSheetSpan = styled.span`
+  color: #999;
+  font-size: 12px;
+`;
+
+export type ActionSheetOption = {
+  key: string;
+  text: any;
+};
+
+export type ActionSheetProps = {
   visible: boolean;
-  constructor(props: IActionSheet) {
-    this.props = props;
-    this.el = document.createElement("div");
-    this.el.id = uid("ActionSheet");
-    document.body.appendChild(this.el);
-    this.render();
-    this.visible = true;
-    setTimeout(() => {
-      this.render();
-    });
-  }
+  onSelect(key: string): void | Promise<void>;
+  onClose(): void;
+  options: ActionSheetOption[];
+  maskClosable?: boolean;
+  onHideEnd?(): void;
+};
 
-  close() {
-    ReactDOM.unmountComponentAtNode(this.el);
-    document.body.removeChild(this.el);
-  }
+export const ActionSheet: React.FC<ActionSheetProps> = props => {
+  const { visible, options, maskClosable, onHideEnd } = props;
+  const propsRef = useRefProps(props);
 
-  onSelect = (key: string) => {
-    this.destroy(() => {
-      if (this.props.onSelect) {
-        this.props.onSelect(key);
+  const [selectedKey, setSelectedKey] = useState('');
+  const selectedKeyRef = useRefProps(selectedKey);
+
+  const onClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      if (selectedKeyRef.current) {
+        return;
       }
-    });
-  };
-
-  onCancel = () => {
-    this.destroy(() => {
-      if (this.props.onCancel) {
-        this.props.onCancel();
+      const key = e.currentTarget.getAttribute('data-key');
+      if (key) {
+        setSelectedKey(key);
+        Promise.resolve(propsRef.current.onSelect(key)).then(() => {
+          setSelectedKey('');
+          propsRef.current.onClose();
+        });
       }
-    });
-  };
+    },
+    []
+  );
 
-  destroy(cb: () => void) {
-    this.visible = false;
-    this.render();
-    setTimeout(() => {
-      this.close();
-      cb();
-    }, 300);
-  }
+  const onCancel = useCallback(() => {
+    if (selectedKeyRef.current) {
+      return;
+    }
+    propsRef.current.onClose();
+  }, []);
 
-  render() {
-    ReactDOM.render(
-      <ActionSheetContent
-        visible={this.visible}
-        options={this.props.options}
-        onSelect={this.onSelect}
-        onCancel={this.onCancel}
-      />,
-      this.el
-    );
-  }
-}
+  return (
+    <LayerContainer
+      visible={visible}
+      placement={LayerPlacement.bottom}
+      maskClosable={maskClosable}
+      onClose={onCancel}
+      onHideEnd={onHideEnd}
+    >
+      <ActionSheetBody>
+        {options.map(item => {
+          return (
+            <ActionSheetItem
+              key={item.key}
+              data-key={item.key}
+              onClick={onClick}
+            >
+              {item.text}
+              {selectedKey === item.key && (
+                <ActionSheetSpan>加载中...</ActionSheetSpan>
+              )}
+            </ActionSheetItem>
+          );
+        })}
+        <ActionSheetCancel key="cancel" onClick={onCancel}>
+          取消
+        </ActionSheetCancel>
+      </ActionSheetBody>
+    </LayerContainer>
+  );
+};

@@ -1,1 +1,5 @@
-export { ActionSheet, IActionSheet } from "./ActionSheet";
+import { showActionSheet } from './ActionSheetMethods';
+
+export const ActionSheet = {
+  showActionSheet
+};
