@@ -1,7 +1,6 @@
 import React from 'react';
 import BScroll from 'better-scroll';
 import styled from 'styled-components';
-import style from 'dom-helpers/style';
 
 const ScrollWrapper = styled.div`
   flex: 1;
@@ -36,7 +35,6 @@ const PullupWrapper = styled.div`
 export interface ScrollProps {
   children: React.ReactChild;
   className?: string;
-  contentStyle?: { [key: string]: any };
   startX?: number;
   startY?: number;
   scrollX?: boolean;
@@ -61,16 +59,8 @@ export class Scroll extends React.Component<ScrollProps> {
   scroll: BScroll | null = null;
 
   componentDidMount() {
-    const { children, className, contentStyle, ...options } = this.props;
+    const { children, className, ...options } = this.props;
     this.scroll = new BScroll(this.ref.current!, options);
-  }
-
-  componentDidUpdate() {
-    if (this.props.contentStyle) {
-      style(this.contentRef.current!, this.props.contentStyle, undefined);
-    }
-
-    this.scroll!.refresh();
   }
 
   componentWillUnmount() {
@@ -78,13 +68,11 @@ export class Scroll extends React.Component<ScrollProps> {
   }
 
   render() {
-    const { className, contentStyle, children } = this.props;
+    const { className, children } = this.props;
 
     return (
       <ScrollWrapper className={className} ref={this.ref}>
-        <ScrollContent style={contentStyle} ref={this.contentRef}>
-          {children}
-        </ScrollContent>
+        <ScrollContent ref={this.contentRef}>{children}</ScrollContent>
       </ScrollWrapper>
     );
   }

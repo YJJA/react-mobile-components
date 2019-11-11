@@ -2,17 +2,18 @@ import { easings } from './easings';
 
 export type EasingType = keyof typeof easings | ((t: number) => number);
 
-export type AnimationSignleValue = number | string;
+export type AnimationSignleValue = number | string | undefined;
 
-export type AnimationObjectValue = {
-  [key: string]: AnimationValueType | undefined;
-};
+export interface AnimationObjectValue {
+  [key: string]: AnimationValueType;
+}
+
+export interface AnimationArrayValue extends Array<AnimationValueType> {}
 
 export type AnimationValueType =
   | AnimationSignleValue
-  | AnimationSignleValue[]
-  | AnimationObjectValue
-  | AnimationObjectValue[];
+  | AnimationArrayValue
+  | AnimationObjectValue;
 
 export type AnimationValue = {
   [key: string]: AnimationValueType | undefined;

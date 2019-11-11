@@ -1,8 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import styled from 'styled-components';
 import * as R from 'ramda';
 
-import { PickerViewColumn, PickerViewColumnItem } from './PickerViewColumn';
+import { PickerViewColumn, PickerViewColumnOption } from './PickerViewColumn';
 import { useRefProps } from '../hooks';
 
 const PickerViewWrapper = styled.div`
@@ -49,50 +55,48 @@ const PickerViewContent = styled.div`
   padding: 0 16px;
 `;
 
-export type PickerViewProps = {
-  value: any;
-  onChange(value: any): void;
-  options: PickerViewColumnItem[] | PickerViewColumnItem[][];
+export type PickerViewOptions<T = any> = PickerViewColumnOption<T>[][];
+
+export type PickerViewProps<T = any> = {
+  value?: T[];
+  onChange(value: T[], index: number, val: T): void;
+  options: PickerViewOptions<T>;
 };
 
-export const PickerView: React.FC<PickerViewProps> = props => {
-  const { options, value, onChange } = props;
-
-  const nextOptions = useMemo(() => {
-    return (options.length && Array.isArray(options[0])
-      ? options
-      : [options]) as PickerViewColumnItem[][];
-  }, [options]);
+export const PickerView = <T extends any>(props: PickerViewProps<T>) => {
+  const { options, value } = props;
+  const propsRef = useRefProps(props);
 
   const selected = useMemo(() => {
-    const values = Array.isArray(value) ? value : [value];
-    return nextOptions.map((group, i) => {
-      const val = values[i];
-      if (R.type(val) === 'Undefined') {
+    const lastValue = value || [];
+    return options.map((group, i) => {
+      const val = lastValue[i];
+      if (typeof value === 'undefined') {
         return 0;
       }
       const index = group.findIndex(item => item.value === val);
       return index === -1 ? 0 : index;
     });
-  }, [value]);
+  }, [value, options]);
 
-  const propsRef = useRefProps({ nextOptions, onChange, selected });
+  const selectedRef = useRefProps(selected);
+
   const changeHandle = useCallback(
     (selectedIndex: number, keyIndex: number = 0) => {
-      const { onChange, nextOptions, selected } = propsRef.current;
+      const { onChange, options } = propsRef.current;
+      const selected = selectedRef.current;
       const nextSelected = [
         ...selected.slice(0, keyIndex),
         selectedIndex,
         ...selected.slice(keyIndex + 1)
       ];
 
-      const value = nextOptions.map((group, i) => {
+      const value = options.map((group, i) => {
         const index = nextSelected[i];
-        return group[index].value;
+        return group[index] && group[index].value;
       });
 
-      const vals = nextOptions.length === 1 ? value[0] : value;
-      onChange(vals);
+      onChange(value, keyIndex, value[keyIndex]);
     },
     []
   );
@@ -103,7 +107,7 @@ export const PickerView: React.FC<PickerViewProps> = props => {
         <PickerViewMaskTop />
         <PickerViewMaskBottom />
         <PickerViewContent>
-          {nextOptions.map((group, index) => {
+          {options.map((group, index) => {
             return (
               <PickerViewColumn
                 key={index}

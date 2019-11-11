@@ -19,20 +19,20 @@ export const UseCarousel = () => {
   return (
     <Wrapper>
       <Group>
-        <Carousel dots>
+        <Carousel dots autoplay>
           <Link style={{ backgroundColor: 'red' }} />
           <Link style={{ backgroundColor: 'blue' }} />
           <Link style={{ backgroundColor: '#ddd' }} />
         </Carousel>
       </Group>
 
-      {/* <Group>
-        <Carousel dots vertical>
+      <Group>
+        <Carousel dots autoplay vertical>
           <Link style={{ backgroundColor: 'red' }} />
           <Link style={{ backgroundColor: 'blue' }} />
           <Link style={{ backgroundColor: '#ddd' }} />
         </Carousel>
-      </Group> */}
+      </Group>
 
       {Array(100)
         .fill(1)

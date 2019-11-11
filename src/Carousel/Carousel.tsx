@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { UseCarouselProps, useCarousel } from './useCarousel';
 
@@ -58,13 +58,7 @@ export const Carousel = (props: CarouselProps) => {
           const current = list[i];
           const style: React.CSSProperties = {
             ...child.props.style,
-            position: current.position,
-            top: current.top,
-            left: current.left,
-            display: current.display,
-            width: current.width,
-            height: current.height,
-            transform: `translate(${current.x}px, ${current.y}px)`
+            ...current
           };
           return React.cloneElement(child, { style });
         })}

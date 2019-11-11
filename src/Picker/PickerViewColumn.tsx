@@ -28,19 +28,19 @@ const PickerViewColumnItem = styled.div.attrs({
   white-space: nowrap;
 `;
 
-export type PickerViewColumnItem = {
-  value: any;
+export type PickerViewColumnOption<T = any> = {
+  value: T;
   label: string;
 };
 
-export type PickerViewColumnProps = {
-  keyIndex?: number;
+export type PickerViewColumnProps<T = any> = {
+  keyIndex: number;
   selectedIndex: number;
-  onChange(selectedIndex: any, keyIndex?: number): void;
-  options: PickerViewColumnItem[];
+  onChange(selectedIndex: any, keyIndex: number): void;
+  options: PickerViewColumnOption<T>[];
 };
 
-export const PickerViewColumn: React.FC<PickerViewColumnProps> = props => {
+export const PickerViewColumn: React.FC<PickerViewColumnProps<any>> = props => {
   const { options, selectedIndex } = props;
   const propsRef = useRefProps(props);
   const rootRef = useRef<HTMLDivElement>(null);

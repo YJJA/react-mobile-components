@@ -1,11 +1,15 @@
-import { AnimationValueType } from './AnimationTypes';
 import {
-  isUndefined,
-  isNumber,
-  isString,
+  AnimationValueType,
+  AnimationObjectValue,
+  AnimationArrayValue
+} from './AnimationTypes';
+import {
   isArray,
-  isObject
-} from '../utils/helpers';
+  isObject,
+  isString,
+  isNumber,
+  isUndefined
+} from '../utils/types';
 import { parseString } from './parseString';
 
 /** Calculate Number */
@@ -16,6 +20,14 @@ function calculateNumber<T extends number>(
 ): T {
   return (from + (to - from) * progress) as T;
 }
+
+const isAnimationObjectValue = (
+  val: AnimationValueType
+): val is AnimationObjectValue => isObject(val);
+
+const isAnimationArrayValue = (
+  val: AnimationValueType
+): val is AnimationArrayValue => isArray(val);
 
 /** Calculate String */
 function calculateString<T extends string>(
@@ -37,11 +49,15 @@ export function calculate<T extends AnimationValueType>(
   to: T | undefined,
   progress: number
 ): T {
+  if (from === to || progress === 0) {
+    return from;
+  }
+
   if (isUndefined(to)) {
     return from;
   }
 
-  if (isArray(from) && isArray(to)) {
+  if (isAnimationArrayValue(from) && isAnimationArrayValue(to)) {
     return from.map((f, k) => {
       const t = to[k] as T;
       return calculate(f, t, progress);
@@ -56,7 +72,7 @@ export function calculate<T extends AnimationValueType>(
     return calculateString(from, to, progress) as T;
   }
 
-  if (isObject<AnimationValueType>(from) && isObject<AnimationValueType>(to)) {
+  if (isAnimationObjectValue(from) && isAnimationObjectValue(to)) {
     return Object.keys(from).reduce<{ [key: string]: AnimationValueType }>(
       (result, k) => {
         const f = from[k];
@@ -70,5 +86,5 @@ export function calculate<T extends AnimationValueType>(
     ) as T;
   }
 
-  throw new Error('Unknown AnimationValueType!');
+  throw new TypeError('Unknown AnimationValueType!');
 }

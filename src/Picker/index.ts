@@ -1,2 +1,2 @@
 export { Picker, PickerProps } from './Picker';
-export { PickerView, PickerViewProps } from './PickerView';
+export { PickerView, PickerViewProps, PickerViewOptions } from './PickerView';

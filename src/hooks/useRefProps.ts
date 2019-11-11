@@ -1,11 +1,7 @@
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 
 export const useRefProps = <T>(props: T) => {
   const propsRef = useRef(props);
-
-  useEffect(() => {
-    propsRef.current = props;
-  }, [props]);
-
+  propsRef.current = props;
   return propsRef;
 };

@@ -5,7 +5,7 @@ import now from 'performance-now';
 import { AnimationConfig, AnimationValue } from './AnimationTypes';
 import { easings } from './easings';
 import { calculate } from './calculate';
-import { isFunction, isUndefined } from '../utils/helpers';
+import { isUndefined, isFunction } from '../utils/types';
 
 type SetAnimationConfig<T extends AnimationValue> =
   | (Partial<T> & AnimationConfig)

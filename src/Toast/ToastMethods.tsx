@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import raf from 'raf';
 
 import { ToastContainer } from './ToastContainer';
-import { isString } from '../utils/helpers';
+import { isString } from '../utils/types';
 
 export type ToastOpenProps = {
   title: string;

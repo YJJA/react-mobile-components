@@ -1,117 +1,93 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
 
-import { PickerView } from './PickerView';
+import { PickerViewOptions } from './PickerView';
 import { LayerContainer } from '../Layer/LayerContainer';
-import { PickerViewColumnItem } from './PickerViewColumn';
 import { LayerPlacement } from '../Layer/layer-placement';
-import { useRefProps } from '../hooks';
+import { useBoolean } from '../hooks';
 import { uid } from '../utils/uid';
+import { PickerPanel } from './PickerPanel';
 
-const PickerWrapper = styled.div`
-  background-color: #fff;
-`;
-
-const PickerHeader = styled.header`
-  border-bottom: 1px solid #ddd;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const PickerBtn = styled.button`
-  border: none;
-  height: 50px;
-  width: 60px;
-  background-color: #fff;
-  color: #007bff;
-  font-size: 14px;
-`;
-
-const PickerBtnCancel = styled(PickerBtn)`
-  color: #999;
-`;
-
-const PickerTitle = styled.h3`
-  text-align: center;
-  font-size: 14px;
-  color: #414141;
-  font-weight: normal;
-`;
-
-export type PickerProps = {
-  visible: boolean;
+export type PickerProps<T = any> = {
   title?: string;
   cancelText?: string;
   okText?: string;
-  onOk?(value: any): void;
+  options: PickerViewOptions<T>;
+  value?: T[];
+  onOk?(): void;
   onCancel?(): void;
-  value?: any;
-  options: PickerViewColumnItem[][];
+  onChange(value: T[], index: number, val: T): void;
+  children: React.ReactNode;
 };
 
-export const Picker: React.FC<PickerProps> = props => {
+export const Picker = <T extends any>(props: PickerProps<T>) => {
   const {
-    visible,
     value,
     options,
     cancelText = '取消',
     okText = '确认',
     title,
-    onCancel
+    onCancel,
+    onOk,
+    onChange,
+    children
   } = props;
-  const propsRef = useRefProps(props);
-  const [selfValue, setSelfValue] = useState(value);
-  const selfValueRef = useRefProps(selfValue);
-  const elRef = useRef<HTMLDivElement | null>(null);
+
+  const [el, setEl] = useState<HTMLDivElement | null>(null);
+  const [visible, toggle] = useBoolean();
+
+  const onShow = useCallback(() => {
+    toggle(true);
+  }, []);
+
+  const okListener = useCallback(() => {
+    toggle(false);
+    onOk && onOk();
+  }, []);
+
+  const cancelListener = useCallback(() => {
+    toggle(false);
+    onCancel && onCancel();
+  }, []);
 
   useEffect(() => {
     const el = document.createElement('div');
     el.id = uid('picker');
     document.body.appendChild(el);
+    setEl(el);
 
-    elRef.current = el;
     return () => {
       document.body.removeChild(el);
     };
   }, []);
 
-  const changeHandle = useCallback((value: any) => {
-    setSelfValue(value);
-  }, []);
-
-  const onHandle = useCallback(() => {
-    const { onOk } = propsRef.current;
-    if (onOk) {
-      onOk(selfValueRef.current);
-    }
-  }, []);
-
-  if (!elRef.current) {
-    return null;
+  let portal: React.ReactPortal | null = null;
+  if (el) {
+    portal = ReactDOM.createPortal(
+      <LayerContainer
+        visible={visible}
+        onClose={cancelListener}
+        placement={LayerPlacement.bottom}
+      >
+        <PickerPanel
+          onChange={onChange}
+          cancelText={cancelText}
+          okText={okText}
+          title={title}
+          value={value}
+          options={options}
+          onCancel={cancelListener}
+          onOk={okListener}
+        />
+      </LayerContainer>,
+      el
+    );
   }
 
-  return ReactDOM.createPortal(
-    <LayerContainer
-      visible={visible}
-      onClose={onCancel}
-      placement={LayerPlacement.bottom}
-    >
-      <PickerWrapper>
-        <PickerHeader>
-          <PickerBtnCancel onClick={onCancel}>{cancelText}</PickerBtnCancel>
-          <PickerTitle>{title}</PickerTitle>
-          <PickerBtn onClick={onHandle}>{okText}</PickerBtn>
-        </PickerHeader>
-
-        <PickerView
-          options={options}
-          value={selfValue}
-          onChange={changeHandle}
-        />
-      </PickerWrapper>
-    </LayerContainer>,
-    elRef.current
+  return (
+    <>
+      <div onClick={onShow}>{children}</div>
+      {portal}
+    </>
   );
 };
