@@ -1,16 +1,15 @@
-import * as R from 'ramda';
-
 import { FormState, FormFieldState } from './types';
+import { getIn } from '../utils/plain';
 
 /** selecter */
 export const formFieldValueSelecter = (state: FormState, field: string) => {
-  return R.path<any>(['values', field], state);
+  return getIn(['values', field], state);
 };
 
 export const formFieldErrorSelecter = (state: FormState, field: string) => {
-  return R.path<any>(['errors', field], state);
+  return getIn(['errors', field], state);
 };
 
 export const formFieldMetaSelecter = (state: FormState, field: string) => {
-  return R.path<FormFieldState>(['fields', field], state) || {};
+  return getIn<FormFieldState>(['fields', field], state) || {};
 };

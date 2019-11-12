@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import {
   FormState,
   FormRegisteredField,
@@ -34,6 +32,9 @@ import {
   formErrors
 } from './formActions';
 
+import { setIn, getIn, rmvIn } from '../utils/plain';
+import { isEqual, isFunction } from '../utils/types';
+
 type Behavior = (state: FormState, action: any) => FormState;
 
 const behaviors: { [type: string]: Behavior } = {
@@ -42,22 +43,22 @@ const behaviors: { [type: string]: Behavior } = {
     { meta: { field, touch }, payload }: ReturnType<typeof fieldChange>
   ) => {
     let result = state;
-    const initial = R.path<any>(['initial', field], result);
+    const initial = getIn<any>(['initial', field], result);
     if (initial === undefined && payload === '') {
-      result = R.dissocPath(['values', field], result);
-    } else if (R.type(payload) === 'Function') {
-      const currValue = R.path<any>(['values', field], result);
-      result = R.assocPath(
+      result = rmvIn(['values', field], result);
+    } else if (isFunction(payload)) {
+      const currValue = getIn<any>(['values', field], result);
+      result = setIn(
         ['values', field],
         payload(currValue, state.values),
         result
       );
     } else if (payload !== undefined) {
-      result = R.assocPath(['values', field], payload, result);
+      result = setIn(['values', field], payload, result);
     }
     if (touch) {
-      result = R.assocPath(['fields', field, 'touched'], true, result);
-      result = R.assocPath(['anyTouched'], true, result);
+      result = setIn(['fields', field, 'touched'], true, result);
+      result = setIn(['anyTouched'], true, result);
     }
 
     return result;
@@ -67,20 +68,20 @@ const behaviors: { [type: string]: Behavior } = {
     { meta: { field, touch }, payload }: ReturnType<typeof fieldBlur>
   ) => {
     let result = state;
-    const initial = R.path<any>(['initial', field], result);
+    const initial = getIn<any>(['initial', field], result);
     if (initial === undefined && payload === '') {
-      result = R.dissocPath(['values', field], result);
+      result = rmvIn(['values', field], result);
     } else if (payload !== undefined) {
-      result = R.assocPath(['values', field], payload, result);
+      result = setIn(['values', field], payload, result);
     }
-    if (field === R.path(['active'], result)) {
-      result = R.dissocPath(['active'], result);
+    if (field === getIn(['active'], result)) {
+      result = rmvIn(['active'], result);
     }
-    result = R.dissocPath(['fields', field, 'active'], result);
+    result = rmvIn(['fields', field, 'active'], result);
 
     if (touch) {
-      result = R.assocPath(['fields', field, 'touched'], true, result);
-      result = R.assocPath(['anyTouched'], true, result);
+      result = setIn(['fields', field, 'touched'], true, result);
+      result = setIn(['anyTouched'], true, result);
     }
     return result;
   },
@@ -89,12 +90,12 @@ const behaviors: { [type: string]: Behavior } = {
     { meta: { field } }: ReturnType<typeof fieldFocus>
   ) => {
     let result = state;
-    const prevActive = R.path<any>(['active'], result);
+    const prevActive = getIn<any>(['active'], result);
     if (prevActive) {
-      result = R.dissocPath(['fields', field, 'active'], result);
+      result = rmvIn(['fields', field, 'active'], result);
     }
-    result = R.assocPath(['fields', field, 'active'], true, result);
-    result = R.assocPath(['active'], field, result);
+    result = setIn(['fields', field, 'active'], true, result);
+    result = setIn(['active'], field, result);
     return result;
   },
   [FORM_FIELD_TOUCH]: (
@@ -103,7 +104,7 @@ const behaviors: { [type: string]: Behavior } = {
   ) => {
     let result = state;
     fields.map(field => {
-      result = R.assocPath(['fields', field, 'touched'], true, result);
+      result = setIn(['fields', field, 'touched'], true, result);
     });
     return result;
   },
@@ -113,26 +114,22 @@ const behaviors: { [type: string]: Behavior } = {
     { meta: { field, type } }: ReturnType<typeof fieldRegister>
   ) => {
     let result = state;
-    let regField = R.path<FormRegisteredField>(
+    let regField = getIn<FormRegisteredField>(
       ['registeredFields', field],
       result
     );
 
     if (regField) {
       const count = regField.count + 1;
-      regField = R.assocPath(
-        ['registeredFields', field, 'count'],
-        count,
-        regField
-      );
+      regField = setIn(['registeredFields', field, 'count'], count, regField);
     } else {
       regField = { name: field, type, count: 1 };
     }
 
-    result = R.assocPath(['registeredFields', field], regField, result);
-    let initialValue = R.path<any>(['initial', field], result);
+    result = setIn(['registeredFields', field], regField, result);
+    let initialValue = getIn<any>(['initial', field], result);
     if (typeof initialValue !== 'undefined') {
-      result = R.assocPath(['values', field], initialValue, result);
+      result = setIn(['values', field], initialValue, result);
     }
 
     return result;
@@ -142,32 +139,32 @@ const behaviors: { [type: string]: Behavior } = {
     { meta: { field } }: ReturnType<typeof fieldUnregister>
   ) => {
     let result = state;
-    let regField = R.path<FormRegisteredField>(
+    let regField = getIn<FormRegisteredField>(
       ['registeredFields', field],
       result
     );
     if (!regField) {
       return result;
     }
-    const count = R.prop('count', regField) - 1;
+    const count = getIn(['count'], regField) - 1;
     if (count < 1) {
-      result = R.dissocPath(['registeredFields', field], result);
-      const registeredFields = R.path<any>(['registeredFields'], result);
-      if (R.equals(registeredFields, {})) {
-        result = R.dissoc('registeredFields', result);
+      result = rmvIn(['registeredFields', field], result);
+      const registeredFields = getIn<any>(['registeredFields'], result);
+      if (isEqual(registeredFields, {})) {
+        result = rmvIn(['registeredFields'], result);
       }
-      let errors = R.path<any>(['errors'], result);
+      let errors = getIn<any>(['errors'], result);
       if (errors) {
-        errors = R.dissoc(field, errors);
-        if (R.equals(errors, {})) {
-          result = R.dissocPath(['errors'], result);
+        errors = rmvIn([field], errors);
+        if (isEqual(errors, {})) {
+          result = rmvIn(['errors'], result);
         } else {
-          result = R.assocPath(['errors'], errors, result);
+          result = setIn(['errors'], errors, result);
         }
       }
     } else {
-      regField = R.assoc('count', count, regField);
-      result = R.assocPath(['registeredFields', field], regField, result);
+      regField = setIn(['count'], count, regField);
+      result = setIn(['registeredFields', field], regField, result);
     }
 
     return result;
@@ -179,13 +176,13 @@ const behaviors: { [type: string]: Behavior } = {
   ) => {
     let result = state;
 
-    if (R.equals(result.initial, initial)) {
+    if (isEqual(result.initial, initial)) {
       return result;
     }
 
-    result = R.assocPath(['initial'], initial, result);
+    result = setIn(['initial'], initial, result);
     let values: FormStateValues = {};
-    const registeredFields = R.path<{ [key: string]: FormRegisteredField }>(
+    const registeredFields = getIn<{ [key: string]: FormRegisteredField }>(
       ['registeredFields'],
       result
     );
@@ -198,18 +195,18 @@ const behaviors: { [type: string]: Behavior } = {
       }, {});
     }
 
-    result = R.assocPath(['values'], values, result);
+    result = setIn(['values'], values, result);
     return result;
   },
 
   [FORM_SUBMIT_START]: (state, {  }: ReturnType<typeof formSubmitStart>) => {
     let result = state;
-    result = R.assocPath(['submitting'], true, result);
+    result = setIn(['submitting'], true, result);
     return result;
   },
   [FORM_SUBMIT_FAILED]: (state, {  }: ReturnType<typeof formSubmitFailed>) => {
     let result = state;
-    result = R.assocPath(['submitting'], false, result);
+    result = setIn(['submitting'], false, result);
     return result;
   },
   [FORM_SUBMIT_SUCCESSED]: (
@@ -217,7 +214,7 @@ const behaviors: { [type: string]: Behavior } = {
     {  }: ReturnType<typeof formSubmitSuccessed>
   ) => {
     let result = state;
-    result = R.assocPath(['submitting'], false, result);
+    result = setIn(['submitting'], false, result);
     return result;
   },
 
@@ -226,10 +223,10 @@ const behaviors: { [type: string]: Behavior } = {
   },
   [FORM_ERRORS]: (state, { payload }: ReturnType<typeof formErrors>) => {
     let result = state;
-    if (R.equals(payload, {})) {
-      result = R.dissocPath(['errors'], result);
+    if (isEqual(payload, {})) {
+      result = rmvIn(['errors'], result);
     } else {
-      result = R.assocPath(['errors'], payload, result);
+      result = setIn(['errors'], payload, result);
     }
     return result;
   }

@@ -24,6 +24,8 @@
     "no-empty": false,
     "interface-over-type-literal": false,
     "no-bitwise": false,
-    "no-conditional-assignment": false
+    "no-conditional-assignment": false,
+    "valid-typeof": false,
+    "ban-types": false
   }
 }

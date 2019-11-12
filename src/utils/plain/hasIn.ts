@@ -1,10 +1,26 @@
-import { PlainArray, PlainObject, Key } from './PlainTypes';
-import { _hasIn } from './internal/_hasIn';
+import { Path } from './types';
+import { isNil } from '../types';
 
-/** hasIn */
-export const hasIn = <U extends PlainArray | PlainObject>(
-  path: Key[],
-  target: U
-): boolean => {
-  return _hasIn(path, target);
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+export const hasIn = (path: Path, object: any): boolean => {
+  if (isNil(object)) {
+    return false;
+  }
+
+  if (path.length === 0) {
+    return false;
+  }
+
+  const [key, ...cpath] = path;
+  const hasKey = hasOwnProperty.call(object, key);
+  if (path.length === 1) {
+    return hasKey;
+  }
+
+  if (!hasKey) {
+    return false;
+  }
+
+  return hasIn(cpath, object[key]);
 };

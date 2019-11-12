@@ -3,15 +3,14 @@
   "version": "0.0.1",
   "scripts": {
     "build": "tsc",
-    "storybook": "start-storybook -p 8989"
+    "storybook": "start-storybook -p 8989",
+    "test": "jest"
   },
   "dependencies": {
     "better-scroll": "^1.14.1",
     "date-fns": "2.6.0",
-    "lodash": "^4.17.11",
     "performance-now": "^2.1.0",
     "raf": "^3.4.1",
-    "ramda": "^0.26.1",
     "styled-components": "^4.4.0",
     "tiny-invariant": "^1.0.6",
     "tiny-warning": "^1.0.3"
@@ -21,20 +20,21 @@
     "@storybook/addon-info": "^5.2.5",
     "@storybook/react": "^5.2.5",
     "@types/better-scroll": "*",
-    "@types/lodash": "*",
+    "@types/jest": "^24.0.22",
     "@types/raf": "^3.4.0",
-    "@types/ramda": "*",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@types/styled-components": "4.1.19",
     "@types/superagent": "*",
     "awesome-typescript-loader": "^5.2.1",
     "babel-loader": "^8.0.6",
-    "prettier": "1.16.4",
+    "jest": "^24.9.0",
+    "prettier": "1.19.1",
     "react": "16.8.1",
     "react-docgen-typescript-loader": "^3.3.0",
     "react-dom": "16.8.1",
     "superagent": "4.1.0",
+    "ts-jest": "^24.1.0",
     "tslint": "5.12.1",
     "tslint-config-prettier": "1.18.0",
     "tslint-config-standard": "8.0.1",
@@ -45,7 +45,6 @@
   "peerDependencies": {
     "react": ">=16.8",
     "react-dom": ">=16.8",
-    "styled-components": ">=4",
-    "superagent": ">=4"
+    "styled-components": ">=4"
   }
 }

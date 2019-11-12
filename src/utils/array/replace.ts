@@ -5,5 +5,8 @@
  * @param arr 数组
  */
 export const replace = <T>(index: number, element: T, arr: T[]) => {
+  if (index < 0) {
+    return arr;
+  }
   return [...arr.slice(0, index), element, ...arr.slice(index + 1)];
 };

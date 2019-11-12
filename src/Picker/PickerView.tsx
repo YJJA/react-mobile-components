@@ -1,12 +1,5 @@
-import React, {
-  useCallback,
-  useMemo,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import React, { useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import * as R from 'ramda';
 
 import { PickerViewColumn, PickerViewColumnOption } from './PickerViewColumn';
 import { useRefProps } from '../hooks';

@@ -1,3 +1,5 @@
-// tslint:disable-next-line:ban-types
+/**
+ * is Function
+ */
 export const isFunction = (val: any): val is Function =>
   typeof val === 'function';

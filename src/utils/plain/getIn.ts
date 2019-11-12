@@ -1,10 +1,20 @@
-import { PlainType, Key, PlainArray, PlainObject } from './PlainTypes';
-import { _getIn } from './internal/_getIn';
+import { Path } from './types';
+import { isNil } from '../types';
 
-/** getIn */
-export const getIn = <T extends PlainType, U extends PlainArray | PlainObject>(
-  path: Key[],
-  target: U
-): T => {
-  return _getIn(path, target);
+export const getIn = <T = any>(path: Path, object: any): T | undefined => {
+  if (isNil(object)) {
+    return undefined;
+  }
+
+  if (path.length === 0) {
+    return undefined;
+  }
+
+  const [key, ...cpath] = path;
+  const child = object[key];
+  if (path.length === 1) {
+    return child;
+  }
+
+  return getIn(cpath, child);
 };
